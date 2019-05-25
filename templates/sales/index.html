@@ -1,0 +1,49 @@
+{% extends 'sales/base.html' %}
+{% load staticfiles %}
+{% block content %}
+{% load common_tags %}
+<!-- <a href="{% url "common:logout" %}"><button class="btn btn-primary" type="button">Logout</button></a> -->
+<div class="row marl justify-content-center">
+  <div class="col-md-9">
+    <!-- count_blocks_row starts here -->
+    <div class="row count_blocks_row">
+      <div class="col-md-3">
+        <div class="item sky_blue">
+          <a href="...">
+            <div class="title">Novedades</div>
+            <div class="count">2</div>
+            <!-- <div class="more"><a href="#">Go Live</a></div> -->
+          </a>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="item green">
+          <a href="{% url 'contacts:list' %}">
+            <div class="title">Contactos</div>
+            <div class="count">{{contacts_count}}</div>
+          </a>
+          <!-- <div class="more"><a href="#">Go Live</a></div> -->
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="item red">
+          <a href="...">
+            <div class="title">Resultados</div>
+            <div class="count">2</div>
+            <!-- <div class="more"><a href="#">Go Live</a></div> -->
+          </a>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="item yellow">
+          <a href="...">
+            <div class="title">Proyecciones</div>
+            <div class="count">1</div>
+            <!-- <div class="more"><a href="#">Go Live</a></div> -->
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- count_blocks_row ends here -->
+
+{% endblock %}

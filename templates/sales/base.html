@@ -1,0 +1,13 @@
+{% extends 'root.html' %}
+
+{% block main_menu %}
+<ul class="navbar-nav mr-auto">
+  <li class="nav-item"><a class="nav-link" id="dashboard" href="{% url 'common:home' %}">Panel de Control</a></li>
+  <li class="nav-item"><a class="nav-link" id="novedades" href="...">Novedades</a></li>
+  <li class="nav-item"><a class="nav-link" id="contacts" href="{% url 'contacts:list' %}">Contactos</a></li>
+  <li class="nav-item"><a class="nav-link" id="resultados" href="{% url 'facturas:list' %}">Resultados</a></li>
+  <li class="nav-item"><a class="nav-link" id="opportunities"href="...">Proyecciones</a></li>
+  <li class="nav-item"><a class="nav-link" id="cases" href="...">Vencimientos</a></li>
+  <li class="nav-item"><a class="nav-link" id="documents" href="{% url 'common:doc_list' %}">Documentos</a></li>
+</ul>
+{% endblock %}

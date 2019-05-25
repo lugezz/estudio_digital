@@ -1,0 +1,143 @@
+{% extends 'sales/base.html' %}
+{% load staticfiles %}
+{% load paginate %}
+{% block content %}
+<!-- main_container starts here -->
+<div class="main_container">
+  <!-- filter_row starts here -->
+  <div class="row marl">
+    <div class="col-lg-12 text-right">
+      <span class="d-inline"><a href="{% url 'common:create_user'%}" class="btn primary_btn"><i class="fa fa-plus"></i> Agregar Nuevo usuario</a></span>
+    </div>
+  </div>
+  <!-- filter_row ends here -->
+    <!-- popup for change password start's here  -->
+  <div class="modal fade" id="pass_change_div" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header" style="padding:20px 50px;">
+          <h4><span class="glyphicon glyphicon-lock"></span> Cambiar Contraseña</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body" style="padding:20px 50px;">
+          <form role="form" id="chang_password_form" method="POST" action="{% url 'common:change_passsword_by_admin' %}">
+            <div class="form-group">
+              <label for="usrname"><span class="glyphicon glyphicon-user"></span> Nueva Contraseña</label>
+              <input type="password" class="form-control" name="new_passwoord" id="new_passwoord" placeholder="New Password">
+              <p id="password_eror"style="color:red"></p>
+              <input type="hidden" id="useer_id" name="useer_id">
+            </div>
+            <button id="submit_password" type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Change</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- popup for change password end's here -->
+  <div class="table_container_row row marl">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title list text-right">
+            <span class="float-left">Usuarios - {% if show_pageitems %} {% show_pageitems %}{% else %} {{ users|length }}{% endif %}</span>
+            <span class="filter_toggle">
+            <a style="padding:0px 10px;" href="#" class="primary_btn"></a>
+            </span>
+          </div>
+          <div class="table-responsive ">
+            <table class="table table-bordered table-striped table-condensed">
+              <thead>
+                {% if users|length > 0 %}
+                <tr>
+                  <th width="20%">Usuario</th>
+                  <th width="20%">Email</th>
+                  <th width="8%">Rol</th>
+                  <th width="15%">Estado</th>
+                  <th width="20%">Acciones</th>
+                </tr>
+                {% endif %}
+              </thead>
+              <tbody>
+                {% if per_page %}
+                {% paginate per_page users %}
+                {% else %}
+                {% paginate 10 users %}
+                {% endif %}
+                {% for user in users %}
+                <tr class="text-center">
+                  <td><a href="{% url 'common:view_user' user.id %}">{{ user.username|capfirst }}</a></td>
+                  <td>{{ user.email }}</td>
+                  <td class="user_role">{% if user.is_superuser %} Admin {% else %} {{user.role}} {% endif %}</td>
+                  <td>
+                  {% ifnotequal request.user user  %}
+                  <a {% if user.is_active %} onclick="return confirm('¿Está seguro que desea desactivar este usuario?')" {% else %} onclick="return confirm('¿Está seguro que quiere activar este usuario?')" {% endif %} href="{% url 'common:change_user_status' pk=user.id %}" class="on_off" style="color: #454545; text-decoration: none;">
+                    {% if user.is_active == True %}
+                    <i class="fa fa-toggle-on"></i> Activo
+                    {% else %}
+                    <i class="fa fa-toggle-off"></i> Inactivo
+                    {% endif %}
+                    </a>
+                    {% else %}
+                    Activo
+                  {% endifnotequal %}
+                  </td>
+                  <td class="actions">
+                    <!-- <a href="{% url 'common:view_user' user.id %}" class="btn btn-info view"><i class="fas fa-eye"></i>View</a> -->
+                    {% if user.email != admin_email  or request.user.email == admin_email %}
+                    <a href="{% url 'common:edit_user' user.id %}" class="btn btn-success edit action"><i class="fas fa-pencil-alt"></i>Edit</a>
+                    {% endif %}
+                    <a href="{% url 'common:remove_user' user.id %}" class="btn btn-danger trash action" {% if request.user.email == user.email %} style="visibility: hidden;" {% endif %}><i class="fas fa-trash-alt"></i>Delete</a>
+                    {% if user.email != admin_email and request.user != user %}
+                    <a style="color:black;margin-bottom: -11px;" data-id="{{user.id}}" href="" class="fa-passwd-reset fa-stack" ><i class="fa fa-undo fa-stack-2x"></i><i class="fa fa-lock fa-stack-1x"></i></a>{% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% ifequal users|length 0 %}
+          <h6 class="text-center">No se encontraron usuarios</h6>
+          {% endifequal %}
+          <div class="marl row text-center">
+            {% show_pages %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- main_container ends here -->
+{% endblock %}
+{% block js_block %}
+<script type="text/javascript">
+  $('.trash').click(function(e){
+    e.preventDefault()
+    url = $(this).attr('href')
+    if (!confirm('¿Está seguro que desea borrar?'))
+      return;
+    window.location = $(this).attr('href')
+  });
+</script>
+<script>
+$(document).ready(function(){
+  var user_id;
+  $(".fa-passwd-reset").click(function(e){
+    e.preventDefault();
+    user_id = $(this).attr('data-id')
+    $("#password_eror").text("");
+    $("#pass_change_div").modal();
+  });
+  $("#submit_password").click(function(e){
+    e.preventDefault();
+    if ($("#new_passwoord").val().length <4){
+      $("#password_eror").text("* Las contraseñas deben tener al menos 4 carácteres!")
+    }
+    else{
+      $("#password_eror").text("");
+      $('#useer_id').val(user_id);
+      $("#chang_password_form").submit()
+    }
+  });
+});
+</script>
+{% endblock js_block %}
