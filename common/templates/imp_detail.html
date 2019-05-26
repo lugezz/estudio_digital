@@ -4,13 +4,13 @@
 {% block breadcrumb %}
 <nav aria-label="breadcrumb">
 <ol class="breadcrumb">
-  <li class="breadcrumb-item"> <a  href="{% url 'common:empresas_list' %}">Empresas</a></li>
+  <li class="breadcrumb-item"> <a  href="{% url 'common:impuestos_list' %}">Impuestos</a></li>
   <li class="breadcrumb-item active">Ver</li>
 </ol>
 </nav>
 {% endblock %}
 {% block content %}
-<!-- EMPRESAS VIEW STARTS -->
+<!-- Impuestos VIEW STARTS -->
   <div class="main_container" id="maincontainer">
     <div class="overview_form_block row marl justify-content-center">
       <div class="col-md-8">
@@ -26,7 +26,7 @@
                   <button class="btn primary_btn dropdown-toggle" type="button" data-toggle="dropdown">Acciones
                   <span class="caret"></span></button>
                   <ul class="dropdown-menu">
-                    <li><a href="{% url 'common:edit_empresa' empresa.id %}">Editar</a></li>
+                    <li><a href="{% url 'common:edit_impuesto' impuesto.id %}">Editar</a></li>
                   </ul>
                 </div>
               </span>
@@ -37,14 +37,14 @@
               <div class="col-md-4">
                 <div class="filter_col col-md-12" id="iname">
                   <div class="form-group" >
-                    <label class="empresa_field_label" for="id_name" data-name="name">Nombre</label>
-                    <div class="empresa_field" id="empresa_name" data-name="name">{{ empresa.nombre }}</div>
+                    <label class="impuesto_field_label" for="id_name" data-name="name">Nombre</label>
+                    <div class="impuesto_field" id="impuesto_name" data-name="name">{{ impuesto.nombre }}</div>
                   </div>
                 </div>
                 <div class="filter_col col-md-12">
                   <div class="form-group">
-                    <label class="empresa_field_label" for="id_phone" data-name="name">CUIT</label>
-                    <div class="empresa_field" id="empresa_phone" data-name="name">{{ empresa.CUIT }}</div>
+                    <label class="impuesto_field_label" for="id_phone" data-name="name">Tipo</label>
+                    <div class="impuesto_field" id="impuesto_phone" data-name="name">{{ impuesto.tipo |capfirst }}</div>
                   </div>
                 </div>
 
@@ -52,13 +52,13 @@
               <div class="col-md-4">
                 <div class="filter_col col-md-12">
                   <div class="form-group">
-                    <label class="empresa_field_label" for="id_phone" data-name="name">Teléfono</label>
-                    <div class="empresa_field" id="empresa_phone" data-name="name">{{ empresa.telefono }}</div>
+                    <label class="impuesto_field_label" for="id_phone" data-name="name">Periodicidad</label>
+                    <div class="impuesto_field" id="impuesto_phone" data-name="name">{{ impuesto.periodicidad |capfirst}}</div>
                   </div>
 
                   <div class="form-group">
-                    <label class="empresa_field_label" for="id_email" data-name="name">Email</label>
-                    <div class="empresa_field" id="empresa_email" data-name="name">{{ empresa.mail }}</div>
+                    <label class="impuesto_field_label" for="id_email" data-name="name">Div. Vencimientos</label>
+                    <div class="impuesto_field" id="impuesto_email" data-name="name">{{ impuesto.div_venc }}</div>
                   </div>
 
                 </div>
@@ -66,19 +66,14 @@
               <div class="col-md-4">
                 <div class="filter_col col-md-12">
                   <div class="form-group">
-                    {% if empresa.direccion.address_line or empresa.direccion.street or empresa.direccion.city or  empresa.direccion.state or empresa.direccion.postcode or empresa.direccion.country %}
-                    <label class="empresa_field_label" for="id_address" data-name="name" >Dirección</label>
-                    <div class="empresa_field" id="empresa_address" data-name="name">
-                      {{empresa.direccion.get_complete_address}}
-                    </div>
-                    {% endif %}
-                  </div>
+                    <label class="impuesto_field_label" for="id_address" data-name="name" >1º día vence</label>
+                    <div class="impuesto_field" id="impuesto_address" data-name="name">{{ impuesto.pri_dia }}</div>
                 </div>
                 <div class="filter_col col-md-12">
                   <div class="form-group">
-                    {% if empresa.description %}
-                    <label class="empresa_field_label" for="id_description" data-name="name">Descripción</label>
-                    <div class="empresa_field" id="empresa_description" data-name="name">{{ empresa.description }}</div>
+                    {% if impuesto.description %}
+                    <label class="impuesto_field_label" for="id_description" data-name="name">Descripción</label>
+                    <div class="impuesto_field" id="impuesto_description" data-name="name">{{ impuesto.description }}</div>
                     {% endif %}
                   </div>
                 </div>
@@ -93,7 +88,7 @@
 
     </div>
   </div>
-<!-- EMPRESAS VIEW ENDS -->
+<!-- impuestos VIEW ENDS -->
 {% endblock%}
 {% block js_block %}
 <script type="text/javascript">
@@ -138,7 +133,7 @@ $("#comment_form").submit(function (e) {
 
 
 function edit_comment(x) {
-  $('#Comments_empresas_Modal').modal('show');
+  $('#Comments_impuestos_Modal').modal('show');
   comment = $("#comment_name" + x).text()
   $("#commentid").val(x)
   $("#id_editcomment").val(comment)
@@ -159,7 +154,7 @@ $("#comment_edit").click(function (e) {
         $("#CommentEditError").html(data.error).show()
       } else {
         $("#comment_name" + data.commentid).html('<pre>' + data.comment + '</pre>')
-        $('#Comments_empresas_Modal').modal('hide');
+        $('#Comments_impuestos_Modal').modal('hide');
         $("#id_editcomment").val("")
         $("#CommentEditError").html("")
       }

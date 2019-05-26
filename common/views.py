@@ -20,7 +20,7 @@ from common.forms import (
     UserForm, LoginForm,
     ChangePasswordForm, PasswordResetEmailForm,
     DocumentForm, UserCommentForm,
-    APISettingsForm, EmpresaForm
+    APISettingsForm, EmpresaForm, ImpuestoForm
 )
 from common.utils import COUNTRIES
 from common.forms import AddressForm
@@ -754,10 +754,6 @@ class CreateEmpresaView(AdminRequiredMixin, CreateView):
     form_class = EmpresaForm
     template_name = "emp_create.html"
 
-    def dispatch(self, request, *args, **kwargs):
-        return super(CreateEmpresaView, self).dispatch(
-            request, *args, **kwargs)
-
     def get_form_kwargs(self):
         kwargs = super(CreateEmpresaView, self).get_form_kwargs()
         return kwargs
@@ -766,10 +762,11 @@ class CreateEmpresaView(AdminRequiredMixin, CreateView):
         self.object = None
         form = self.get_form()
         address_form = AddressForm(request.POST)
+
         if form.is_valid() and address_form.is_valid():
             address_obj = address_form.save()
             empresa_obj = form.save(commit=False)
-            empresa_obj.address = address_obj
+            empresa_obj.direccion = address_obj
             empresa_obj.save()
 
             return self.form_valid(form)
@@ -782,9 +779,9 @@ class CreateEmpresaView(AdminRequiredMixin, CreateView):
         if self.request.is_ajax():
             return JsonResponse({'error': False})
         if self.request.POST.get("savenewform"):
-            return redirect("empresas:add_empresa")
+            return redirect("common:create_empresa")
 
-        return redirect('commom:empresas_list')
+        return redirect('common:empresas_list')
 
     def form_invalid(self, form):
         address_form = AddressForm(self.request.POST)
@@ -828,59 +825,59 @@ class UpdateEmpresaView(LoginRequiredMixin, UpdateView):
     form_class = EmpresaForm
     template_name = "emp_create.html"
 
+    def dispatch(self, request, *args, **kwargs):
+        return super(UpdateEmpresaView, self).dispatch(
+            request, *args, **kwargs)
+
     def get_form_kwargs(self):
         kwargs = super(UpdateEmpresaView, self).get_form_kwargs()
         return kwargs
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        address_obj = self.object.address
+        address_obj = self.object.direccion
         form = self.get_form()
         address_form = AddressForm(request.POST, instance=address_obj)
         if form.is_valid() and address_form.is_valid():
             addres_obj = address_form.save()
             empresa_obj = form.save(commit=False)
-            empresa_obj.address = addres_obj
+            empresa_obj.direccion = addres_obj
             empresa_obj.save()
             return self.form_valid(form)
         return self.form_invalid(form)
 
     def form_valid(self, form):
-        empresa = form.save(commit=False)
+        empresa_obj = form.save(commit=False)
+
         if self.request.is_ajax():
-            if (self.request.user.role != "ADMIN" and not
-                    self.request.user.is_superuser):
-                if self.request.user.id != self.object.id:
-                    data = {'error_403': True, 'error': True}
-                    return JsonResponse(data)
-        if user.role == "USER":
-            user.is_superuser = False
-        user.save()
-        if (self.request.user.role == "ADMIN" and
-                self.request.user.is_superuser):
-            if self.request.is_ajax():
-                data = {'success_url': reverse_lazy(
-                    'common:users_list'), 'error': False}
-                return JsonResponse(data)
-        if self.request.is_ajax():
-            data = {'success_url': reverse_lazy(
-                'common:profile'), 'error': False}
-            return JsonResponse(data)
-        return super(UpdateEmpresaView, self).form_valid(form)
+            return JsonResponse({'error': False})
+        return redirect("common:empresas_list")
 
     def form_invalid(self, form):
-        response = super(UpdateEmpresaView, self).form_invalid(form)
+        address_obj = self.object.direccion
+        address_form = AddressForm(
+            self.request.POST, instance=address_obj)
         if self.request.is_ajax():
-            return JsonResponse({'error': True, 'errors': form.errors})
-        return response
+            return JsonResponse({'error': True, 'empresas_errors': form.errors,
+                                 'address_errors': address_form.errors})
+        return self.render_to_response(
+            self.get_context_data(form=form, address_form=address_form))
 
     def get_context_data(self, **kwargs):
         context = super(UpdateEmpresaView, self).get_context_data(**kwargs)
         context["empresa_obj"] = self.object
-        context["address_obj"] = self.object.address
+        context["address_obj"] = self.object.direccion
         context["empresa_form"] = context["form"]
-        if "errors" in kwargs:
-            context["errors"] = kwargs["errors"]
+        context["countries"] = COUNTRIES
+        if "address_form" in kwargs:
+            context["address_form"] = kwargs["address_form"]
+        else:
+            if self.request.POST:
+                context["address_form"] = AddressForm(
+                    self.request.POST, instance=context["address_obj"])
+            else:
+                context["address_form"] = AddressForm(
+                    instance=context["address_obj"])
         return context
 
 
@@ -890,4 +887,132 @@ class EmpresaDeleteView(AdminRequiredMixin, DeleteView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.object.delete()
-        return redirect("common:emp_list")
+        return redirect("common:empresas_list")
+
+
+# Impuestos --------------------------------------------
+class ImpuestosListView(AdminRequiredMixin, TemplateView):
+    model = Impuesto
+    context_object_name = "impuestos"
+    template_name = "imp_list.html"
+
+    def get_queryset(self):
+        queryset = self.model.objects.all()
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(ImpuestosListView, self).get_context_data(**kwargs)
+        context["impuestos"] = self.get_queryset()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
+
+class CreateImpuestoView(AdminRequiredMixin, CreateView):
+    model = Impuesto
+    form_class = ImpuestoForm
+    template_name = "imp_create.html"
+
+    def get_form_kwargs(self):
+        kwargs = super(CreateImpuestoView, self).get_form_kwargs()
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        form = self.get_form()
+
+        if form.is_valid():
+            impuesto_obj = form.save(commit=False)
+            impuesto_obj.save()
+
+            return self.form_valid(form)
+
+        return self.form_invalid(form)
+
+    def form_valid(self, form):
+        impuesto_obj = form.save(commit=False)
+
+        if self.request.is_ajax():
+            return JsonResponse({'error': False})
+        if self.request.POST.get("savenewform"):
+            return redirect("common:create_impuesto")
+
+        return redirect('common:impuestos_list')
+
+    def form_invalid(self, form):
+        if self.request.is_ajax():
+            return JsonResponse({'error': True, 'impuesto_errors': form.errors})
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateImpuestoView, self).get_context_data(**kwargs)
+        context["impuesto_form"] = context["form"]
+
+        return context
+
+class ImpuestoDetailView(AdminRequiredMixin, DetailView):
+    model = Impuesto
+    context_object_name = "impuesto"
+    template_name = "imp_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ImpuestoDetailView, self).get_context_data(**kwargs)
+        impuesto_obj = self.object
+        impuesto_data = []
+
+        context.update({
+            "impuesto_obj": impuesto_obj,
+        })
+        return context
+
+
+class UpdateImpuestoView(LoginRequiredMixin, UpdateView):
+    model = Impuesto
+    form_class = ImpuestoForm
+    template_name = "imp_create.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        return super(UpdateImpuestoView, self).dispatch(
+            request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(UpdateImpuestoView, self).get_form_kwargs()
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            empresa_obj = form.save(commit=False)
+            empresa_obj.save()
+            return self.form_valid(form)
+        return self.form_invalid(form)
+
+    def form_valid(self, form):
+        empresa_obj = form.save(commit=False)
+
+        if self.request.is_ajax():
+            return JsonResponse({'error': False})
+        return redirect("common:impuestos_list")
+
+    def form_invalid(self, form):
+        if self.request.is_ajax():
+            return JsonResponse({'error': True, 'impuesto_errors': form.errors})
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateImpuestoView, self).get_context_data(**kwargs)
+        context["impuesto_obj"] = self.object
+        context["impuesto_form"] = context["form"]
+
+        return context
+
+
+class ImpuestoDeleteView(AdminRequiredMixin, DeleteView):
+    model = Impuesto
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        return redirect("common:impuestos_list")

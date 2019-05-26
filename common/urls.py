@@ -14,7 +14,9 @@ from common.views import (
     update_api_settings, delete_api_settings,
     change_passsword_by_admin,
     EmpresasListView, EmpresaDetailView, CreateEmpresaView, UpdateEmpresaView,
-    EmpresaDeleteView, change_empresa_status
+    EmpresaDeleteView, change_empresa_status,
+    ImpuestosListView, ImpuestoDetailView, CreateImpuestoView, UpdateImpuestoView,
+    ImpuestoDeleteView, change_empresa_status
 )
 from django.conf.urls.static import static
 from django.conf import settings
@@ -39,13 +41,20 @@ urlpatterns = [
     path('users/<int:pk>/delete/',
          UserDeleteView.as_view(), name='remove_user'),
 
-     # Empresas views
-     path('empresas/list/', EmpresasListView.as_view(), name='empresas_list'),
-     path('empresas/create/', CreateEmpresaView.as_view(), name='create_empresa'),
-     path('empresas/<int:pk>/edit/', UpdateEmpresaView.as_view(), name="edit_empresa"),
-     path('empresas/<int:pk>/view/', EmpresaDetailView.as_view(), name='view_empresa'),
-     path('empresas/<int:pk>/delete/',
-          EmpresaDeleteView.as_view(), name='remove_empresa'),
+    # Empresas views
+    path('empresas/list/', EmpresasListView.as_view(), name='empresas_list'),
+    path('empresas/create/', CreateEmpresaView.as_view(), name='create_empresa'),
+    path('empresas/<int:pk>/edit/', UpdateEmpresaView.as_view(), name="edit_empresa"),
+    path('empresas/<int:pk>/view/', EmpresaDetailView.as_view(), name='view_empresa'),
+    path('empresas/<int:pk>/delete/', EmpresaDeleteView.as_view(), name='remove_empresa'),
+
+    # Impuestos views
+    path('impuestos/list/', ImpuestosListView.as_view(), name='impuestos_list'),
+    path('impuestos/create/', CreateImpuestoView.as_view(), name='create_impuesto'),
+    path('impuestos/<int:pk>/edit/', UpdateImpuestoView.as_view(), name="edit_impuesto"),
+    path('impuestos/<int:pk>/view/', ImpuestoDetailView.as_view(), name='view_impuesto'),
+    path('impuestos/<int:pk>/delete/', ImpuestoDeleteView.as_view(), name='remove_impuesto'),
+
 
     path(
         'password-reset/', PasswordResetView.as_view(), name='password_reset'),

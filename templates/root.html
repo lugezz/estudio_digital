@@ -62,6 +62,7 @@
                   {% if request.user.role == "ADMIN"  or request.user.is_superuser %}
                   <a class="dropdown-item" href="{% url 'common:users_list' %}">Usuarios</a>
                   <a class="dropdown-item" href="{% url 'common:empresas_list' %}">Empresas</a>
+                  <a class="dropdown-item" href="{% url 'common:impuestos_list' %}">Impuestos</a>
                   <a class="dropdown-item" href="{% url 'common:api_settings' %}">Configuración</a>
                   {% endif %}
                   {% if request.user.email != "info@ceciliaprados.com.ar" %}

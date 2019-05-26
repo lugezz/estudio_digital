@@ -1,0 +1,108 @@
+{% extends 'sales/base.html' %}
+{% load staticfiles %}
+{% load paginate %}
+{% block content %}
+<!-- main_container starts here -->
+<div class="main_container">
+  <!-- filter_row starts here -->
+  <div class="row marl">
+    <div class="col-lg-12 text-right">
+      <span class="d-inline"><a href="{% url 'common:create_impuesto'%}" class="btn primary_btn">
+        <i class="fa fa-plus"></i> Agregar Nuevo Impuesto</a>
+      </span>
+
+    </div>
+  </div>
+  <!-- filter_row ends here -->
+  <div class="table_container_row row marl">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title list text-right">
+            <span class="float-left">Impuestos - {% if show_pageitems %} {% show_pageitems %}{% else %} {{ impuestos|length }}{% endif %}</span>
+            <span class="filter_toggle">
+            <a style="padding:0px 10px;" href="#" class="primary_btn"></a>
+            </span>
+          </div>
+          <div class="table-responsive ">
+            <table class="table table-bordered table-striped table-condensed">
+              <thead>
+                {% if impuestos|length > 0 %}
+                <tr>
+                  <th width="30%">Impuestos</th>
+                  <th width="25%">Tipo</th>
+                  <th width="25%">Periodicidad</th>
+                  <th width="20%">Acciones</th>
+                </tr>
+                {% endif %}
+              </thead>
+              <tbody>
+                {% if per_page %}
+                {% paginate per_page impuestos %}
+                {% else %}
+                {% paginate 10 impuestos %}
+                {% endif %}
+                {% for impuesto in impuestos %}
+                <tr class="text-center">
+                  <td><a href="{% url 'common:view_impuesto' impuesto.id %}">{{ impuesto.nombre }}</a></td>
+                  <td>{{ impuesto.tipo |capfirst}}</td>
+                  <td>{{ impuesto.periodicidad |capfirst }}</td>
+
+                  <td class="actions">
+                    <!-- Si ya ingresó aquí es administrador, no necesita otro filtro -->
+                    <a href="{% url 'common:edit_impuesto' impuesto.id %}" class="btn btn-success edit action"><i class="fas fa-pencil-alt"></i>Editar</a>
+                    <a href="{% url 'common:remove_impuesto' impuesto.id %}" class="btn btn-danger trash action">
+                      <i class="fas fa-trash-alt"></i>Delete</a>
+
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% ifequal impuestos|length 0 %}
+          <h6 class="text-center">No se encontraron Impuestos</h6>
+          {% endifequal %}
+          <div class="marl row text-center">
+            {% show_pages %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- main_container ends here -->
+{% endblock %}
+{% block js_block %}
+<script type="text/javascript">
+  $('.trash').click(function(e){
+    e.preventDefault()
+    url = $(this).attr('href')
+    if (!confirm('¿Está seguro que desea borrar?'))
+      return;
+    window.location = $(this).attr('href')
+  });
+</script>
+<script>
+$(document).ready(function(){
+  var impuesto_id;
+  $(".fa-passwd-reset").click(function(e){
+    e.preventDefault();
+    impuesto_id = $(this).attr('data-id')
+    $("#password_eror").text("");
+    $("#pass_change_div").modal();
+  });
+  $("#submit_password").click(function(e){
+    e.preventDefault();
+    if ($("#new_passwoord").val().length <4){
+      $("#password_eror").text("* Las contraseñas deben tener al menos 4 carácteres!")
+    }
+    else{
+      $("#password_eror").text("");
+      $('#useer_id').val(impuesto_id);
+      $("#chang_password_form").submit()
+    }
+  });
+});
+</script>
+{% endblock js_block %}

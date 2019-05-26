@@ -95,16 +95,41 @@ class UserForm(forms.ModelForm):
 class EmpresaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EmpresaForm, self).__init__(*args, **kwargs)
-        self.fields['nombre'].required = True
-
         for field in self.fields.values():
             field.widget.attrs = {"class": "form-control"}
-        
+        self.fields['descripcion'].widget.attrs.update({
+            'rows': '6'})
+
+        for key, value in self.fields.items():
+            if key == 'telefono':
+                value.widget.attrs['placeholder'] = "+54-351-456-7890"
+            elif key == 'descripcion':
+                value.widget.attrs['placeholder'] = "Descripción"
+            else:
+                value.widget.attrs['placeholder'] = value.label
 
     class Meta:
         model = Empresa
-        fields = ['nombre', 'CUIT', 'mail', 'telefono', 'direccion']
-        # A futuro validar el CUIT
+        fields = ['nombre', 'CUIT', 'mail', 'telefono', 'direccion', 'descripcion']
+
+class ImpuestoForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ImpuestoForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs = {"class": "form-control"}
+        self.fields['descripcion'].widget.attrs.update({
+            'rows': '6'})
+
+        for key, value in self.fields.items():
+            if key == 'descripcion':
+                value.widget.attrs['placeholder'] = "Descripción"
+            else:
+                value.widget.attrs['placeholder'] = value.label
+
+    class Meta:
+        model = Impuesto
+        fields = ['nombre', 'tipo', 'periodicidad', 'div_venc', 'pri_dia', 'descripcion']
+
 
 class LoginForm(forms.ModelForm):
     email = forms.EmailField()

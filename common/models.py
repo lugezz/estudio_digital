@@ -115,6 +115,7 @@ class Empresa(models.Model):
     direccion = models.ForeignKey(
         Address, related_name='direccion_empresa',
         on_delete=models.CASCADE, blank=True, null=True)
+    descripcion = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.nombre
@@ -127,9 +128,11 @@ class Impuesto(models.Model):
     Tipo_Periodicidad = (('mensual','Mensual'),('anual', 'Anual'),('trimestral', 'Trimestral'))
 
     nombre = models.CharField(max_length=50)
-    tipo_iva = models.CharField(max_length=20, choices=Tipo_Choices, default='nacional')
+    tipo = models.CharField(max_length=20, choices=Tipo_Choices, default='nacional')
     periodicidad = models.CharField(max_length=20, choices=Tipo_Periodicidad, default='mensual')
     div_venc = models.IntegerField()
+    pri_dia= models.IntegerField(default=0)
+    descripcion = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.nombre

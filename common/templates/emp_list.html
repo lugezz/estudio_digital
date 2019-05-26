@@ -46,7 +46,7 @@
                 {% endif %}
                 {% for empresa in empresas %}
                 <tr class="text-center">
-                  <td><a href="{% url 'common:view_empresa' user.id %}">{{ empresa.nombre }}</a></td>
+                  <td><a href="{% url 'common:view_empresa' empresa.id %}">{{ empresa.nombre }}</a></td>
                   <td>{{ empresa.CUIT }}</td>
 
                   <td>
@@ -80,8 +80,8 @@
                   </td>
                   <td class="actions">
                     <!-- Si ya ingresó aquí es administrador, no necesita otro filtro -->
-                    <a href="{% url 'common:edit_empresa' user.id %}" class="btn btn-success edit action"><i class="fas fa-pencil-alt"></i>Editar</a>
-                    <a href="{% url 'common:remove_empresa' user.id %}" class="btn btn-danger trash action">
+                    <a href="{% url 'common:edit_empresa' empresa.id %}" class="btn btn-success edit action"><i class="fas fa-pencil-alt"></i>Editar</a>
+                    <a href="{% url 'common:remove_empresa' empresa.id %}" class="btn btn-danger trash action">
                       <i class="fas fa-trash-alt"></i>Delete</a>
 
                   </td>
