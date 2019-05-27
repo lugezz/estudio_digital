@@ -106,23 +106,6 @@ class Address(models.Model):
                 address += self.get_country_display()
         return address
 
-class Empresa(models.Model):
-    nombre = models.CharField(max_length=50, unique = True)
-    CUIT = models.BigIntegerField()
-    is_active = models.BooleanField(default=True)
-    mail = models.CharField(max_length=50)
-    telefono = models.CharField(max_length=50)
-    direccion = models.ForeignKey(
-        Address, related_name='direccion_empresa',
-        on_delete=models.CASCADE, blank=True, null=True)
-    descripcion = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return self.nombre
-
-    class Meta:
-        ordering = ['-is_active']
-
 class Impuesto(models.Model):
     Tipo_Choices = (('nacional','Nacional'),('provincial', 'Provincial'),('municipal', 'Municipal'))
     Tipo_Periodicidad = (('mensual','Mensual'),('anual', 'Anual'),('trimestral', 'Trimestral'))
@@ -137,19 +120,26 @@ class Impuesto(models.Model):
     def __str__(self):
         return self.nombre
 
-class Emp_Imp(models.Model):
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
-    impuesto = models.ForeignKey(Impuesto, on_delete=models.CASCADE)
+    class Meta:
+        ordering = ['nombre']
+
+class Empresa(models.Model):
+    nombre = models.CharField(max_length=50, unique = True)
+    CUIT = models.BigIntegerField()
+    is_active = models.BooleanField(default=True)
+    mail = models.CharField(max_length=50)
+    telefono = models.CharField(max_length=50)
+    direccion = models.ForeignKey(
+        Address, related_name='direccion_empresa',
+        on_delete=models.CASCADE, blank=True, null=True)
+    descripcion = models.TextField(blank=True, null=True)
+    asignado_a = models.ManyToManyField(Impuesto, related_name='empresa_impuesto')
 
     def __str__(self):
-        return "{} - {}".format(self.empresa, self.impuesto)
+        return self.nombre
 
-class Emp_User(models.Model):
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return "{} - {}".format(self.empresa, self.user)
+    class Meta:
+        ordering = ['-is_active']
 
 
 class Comment(models.Model):

@@ -3,10 +3,7 @@ Estudio Digital - Vinculo Estudio Contables con Clientes
 
 Pendientes:
 
-* Terminar con "Empresas", que grabe el "Create"
+* Terminar con "Empresas"DetailView y los impuestos vinculados
 
 * Vinculos:
   - Usuarios - Empresas - Contactos
-  - Empresas - Impuestos
-  
-  

@@ -15,7 +15,7 @@ from django.views.generic import (
     CreateView, UpdateView, DetailView, TemplateView, View, DeleteView)
 from common.models import (User, Document, Attachments,
                            Comment, APISettings,
-                           Empresa, Impuesto, Emp_Imp, Emp_User)
+                           Empresa, Impuesto)
 from common.forms import (
     UserForm, LoginForm,
     ChangePasswordForm, PasswordResetEmailForm,
@@ -706,7 +706,7 @@ def delete_api_settings(request, pk):
         data = {"error": False, "response": "Successfully Deleted!"}
     else:
         data = {"error": True,
-                "response": "Object Not Found!"}
+                "response": "Objeto No Encontrado!"}
     # return JsonResponse(data)
     return redirect('common:api_settings')
 
@@ -754,8 +754,14 @@ class CreateEmpresaView(AdminRequiredMixin, CreateView):
     form_class = EmpresaForm
     template_name = "emp_create.html"
 
+    def dispatch(self, request, *args, **kwargs):
+        self.impuestos = Impuesto.objects.all()
+        return super(CreateEmpresaView, self).dispatch(
+            request, *args, **kwargs)
+
     def get_form_kwargs(self):
         kwargs = super(CreateEmpresaView, self).get_form_kwargs()
+        kwargs.update({"asignado_a": self.impuestos})
         return kwargs
 
     def post(self, request, *args, **kwargs):
@@ -775,6 +781,12 @@ class CreateEmpresaView(AdminRequiredMixin, CreateView):
 
     def form_valid(self, form):
         empresa_obj = form.save(commit=False)
+        if self.request.POST.getlist('asignado_a', []):
+            empresa_obj.asignado_a.add(
+                *self.request.POST.getlist('asignado_a'))
+            asignado_a_list = self.request.POST.getlist('asignado_a')
+            for asignado_a_impuesto in asignado_a_list:
+                impuesto = get_object_or_404(Impuesto, pk=asignado_a_impuesto)
 
         if self.request.is_ajax():
             return JsonResponse({'error': False})
@@ -794,7 +806,11 @@ class CreateEmpresaView(AdminRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(CreateEmpresaView, self).get_context_data(**kwargs)
         context["empresa_form"] = context["form"]
+        context["impuestos"] = self.impuestos
         context["countries"] = COUNTRIES
+        context["asignadoa_list"] = [
+            int(i) for i in self.request.POST.getlist('asignado_a', []) if i]
+
         if "address_form" in kwargs:
             context["address_form"] = kwargs["address_form"]
         else:
@@ -802,6 +818,7 @@ class CreateEmpresaView(AdminRequiredMixin, CreateView):
                 context["address_form"] = AddressForm(self.request.POST)
             else:
                 context["address_form"] = AddressForm()
+        print(context)
         return context
 
 class EmpresaDetailView(AdminRequiredMixin, DetailView):
@@ -811,11 +828,24 @@ class EmpresaDetailView(AdminRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(EmpresaDetailView, self).get_context_data(**kwargs)
+
+        impuesto_assgn_list = [
+            asignado_a.id for asignado_a in context['object'].asignado_a.all()]
+
+
         empresa_obj = self.object
         empresa_data = []
 
+        assigned_data = []
+        for each in context['empresa'].asignado_a.all():
+            assigned_dict = {}
+            assigned_dict['id'] = each.id
+            assigned_dict['name'] = each.nombre
+            assigned_data.append(assigned_dict)
+
         context.update({
             "empresa_obj": empresa_obj,
+            "assigned_data": json.dumps(assigned_data),
         })
         return context
 
@@ -826,11 +856,14 @@ class UpdateEmpresaView(LoginRequiredMixin, UpdateView):
     template_name = "emp_create.html"
 
     def dispatch(self, request, *args, **kwargs):
+        self.impuestos = Impuesto.objects.all()
         return super(UpdateEmpresaView, self).dispatch(
             request, *args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super(UpdateEmpresaView, self).get_form_kwargs()
+        kwargs.update({"asignado_a": self.impuestos})
+
         return kwargs
 
     def post(self, request, *args, **kwargs):
@@ -847,7 +880,27 @@ class UpdateEmpresaView(LoginRequiredMixin, UpdateView):
         return self.form_invalid(form)
 
     def form_valid(self, form):
+        asignado_a_ids = self.get_object().asignado_a.all().values_list(
+            'id', flat=True)
+
         empresa_obj = form.save(commit=False)
+        all_members_list = []
+
+        if self.request.POST.getlist('asignado_a', []):
+            asignado_de_impuestos = form.cleaned_data.get(
+                'asignado_a').values_list('id', flat=True)
+            all_members_list = list(
+                set(list(asignado_de_impuestos)) - set(list(asignado_a_ids)))
+            if all_members_list:
+                for asignado_a_impuesto in all_members_list:
+                    impuesto = get_object_or_404(Impuesto, id=asignado_a_impuesto)
+
+            empresa_obj.asignado_a.clear()
+            empresa_obj.asignado_a.add(
+                *self.request.POST.getlist('asignado_a'))
+        else:
+            contact_obj.asignado_a.clear()
+
 
         if self.request.is_ajax():
             return JsonResponse({'error': False})
@@ -866,9 +919,16 @@ class UpdateEmpresaView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(UpdateEmpresaView, self).get_context_data(**kwargs)
         context["empresa_obj"] = self.object
+        context["impuestos"] = self.impuestos
+        impuesto_assgn_list = [
+            asignado_a.id for asignado_a in context["empresa_obj"].asignado_a.all()]
+
         context["address_obj"] = self.object.direccion
         context["empresa_form"] = context["form"]
         context["countries"] = COUNTRIES
+        context["asignadoa_list"] = [
+            int(i) for i in self.request.POST.getlist('asignado_a', []) if i]
+
         if "address_form" in kwargs:
             context["address_form"] = kwargs["address_form"]
         else:
@@ -958,8 +1018,9 @@ class ImpuestoDetailView(AdminRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ImpuestoDetailView, self).get_context_data(**kwargs)
+
         impuesto_obj = self.object
-        impuesto_data = []
+
 
         context.update({
             "impuesto_obj": impuesto_obj,

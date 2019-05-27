@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import PasswordResetForm
 from common.models import (Address, User, Document, Comment, APISettings,
-                            Empresa, Impuesto, Emp_Imp, Emp_User)
+                            Empresa, Impuesto)
 
 class AddressForm(forms.ModelForm):
 
@@ -94,11 +94,15 @@ class UserForm(forms.ModelForm):
 
 class EmpresaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        asignado_impuestos = kwargs.pop('asignado_a', [])
         super(EmpresaForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs = {"class": "form-control"}
         self.fields['descripcion'].widget.attrs.update({
             'rows': '6'})
+        self.fields['asignado_a'].queryset = asignado_impuestos
+        self.fields['asignado_a'].required = False
+
 
         for key, value in self.fields.items():
             if key == 'telefono':
@@ -110,7 +114,7 @@ class EmpresaForm(forms.ModelForm):
 
     class Meta:
         model = Empresa
-        fields = ['nombre', 'CUIT', 'mail', 'telefono', 'direccion', 'descripcion']
+        fields = ['nombre', 'CUIT', 'mail', 'telefono', 'direccion', 'descripcion', 'asignado_a']
 
 class ImpuestoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

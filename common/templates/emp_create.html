@@ -100,6 +100,24 @@
                   <span class="error">{{ empresa_form.description.errors }}</span>
                 </div>
               </div>
+
+              <div class="filter_col col-12">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Impuestos Asignados</label>
+                  <select class="assigned_users form-control" name="asignado_a" multiple="multiple">
+                  {% for impuesto in impuestos %}
+                  <option value="{{impuesto.id}}"
+                      {% if impuesto in empresa_obj.asignado_a.all or impuesto.id in asignadoa_list %} selected=""
+                  {% endif %}>
+                  {{impuesto.nombre}}
+                  </option>
+                  {% endfor %}
+                  </select>
+                  <span class="error">{{ empresa_form.asignado_a.errors }}</span>
+                </div>
+              </div>
+
+
             </div>
 
             <input type="hidden" id="save_new_form" name="savenewform">
