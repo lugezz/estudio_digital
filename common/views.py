@@ -829,8 +829,7 @@ class EmpresaDetailView(AdminRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(EmpresaDetailView, self).get_context_data(**kwargs)
 
-        impuesto_assgn_list = [
-            asignado_a.id for asignado_a in context['object'].asignado_a.all()]
+        impuesto_assgn_list = [asignado_a.id for asignado_a in context['object'].asignado_a.all()]
 
 
         empresa_obj = self.object
@@ -840,13 +839,14 @@ class EmpresaDetailView(AdminRequiredMixin, DetailView):
         for each in context['empresa'].asignado_a.all():
             assigned_dict = {}
             assigned_dict['id'] = each.id
-            assigned_dict['name'] = each.nombre
+            assigned_dict['nombre'] = each.nombre
             assigned_data.append(assigned_dict)
 
         context.update({
             "empresa_obj": empresa_obj,
-            "assigned_data": json.dumps(assigned_data),
+            "impuestos_asi": assigned_data
         })
+
         return context
 
 

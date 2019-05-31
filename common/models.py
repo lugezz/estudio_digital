@@ -139,7 +139,7 @@ class Empresa(models.Model):
         return self.nombre
 
     class Meta:
-        ordering = ['-is_active']
+        ordering = ['-is_active', 'nombre']
 
 
 class Comment(models.Model):

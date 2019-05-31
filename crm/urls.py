@@ -13,6 +13,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('contacts/', include('contacts.urls', namespace="contacts")),
     path('facturas/', include('facturas.urls', namespace="facturas")),
+    path('novedades/', include('novedades.urls', namespace="novedades")),
     path('logout/', views.LogoutView, {'next_page': '/login/'}, name="logout"),
 ]
 if settings.DEBUG:
