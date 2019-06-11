@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'storages',
     'facturas',
     'novedades',
+    'tablas',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +66,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'crm.wsgi.application'
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True
+#DJANGO_SETTINGS_MODULE = crm.settings
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
@@ -102,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-ar'
 
 TIME_ZONE = 'America/Argentina/Cordoba'
 

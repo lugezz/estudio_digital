@@ -9,9 +9,9 @@
     <div class="row count_blocks_row">
       <div class="col-md-3">
         <div class="item sky_blue">
-          <a href="...">
+          <a href="{% url 'novedades:novedad-list' %}">
             <div class="title">Novedades</div>
-            <div class="count">2</div>
+            <div class="count">{{novedades_count}}</div>
             <!-- <div class="more"><a href="#">Go Live</a></div> -->
           </a>
         </div>
@@ -27,7 +27,7 @@
       </div>
       <div class="col-md-3">
         <div class="item red">
-          <a href="...">
+          <a href="{% url 'facturas:list' %}">
             <div class="title">Resultados</div>
             <div class="count">2</div>
             <!-- <div class="more"><a href="#">Go Live</a></div> -->

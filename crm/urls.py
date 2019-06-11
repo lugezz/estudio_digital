@@ -14,6 +14,7 @@ urlpatterns = [
     path('contacts/', include('contacts.urls', namespace="contacts")),
     path('facturas/', include('facturas.urls', namespace="facturas")),
     path('novedades/', include('novedades.urls', namespace="novedades")),
+    path('tablas/', include('tablas.urls', namespace="tablas")),
     path('logout/', views.LogoutView, {'next_page': '/login/'}, name="logout"),
 ]
 if settings.DEBUG:

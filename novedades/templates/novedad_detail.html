@@ -1,9 +1,24 @@
 {% extends 'sales/base.html' %}
 {% load staticfiles %}
 {% load paginate %}
+{% load thumbnail %}
 {% block content %}
 
-<h1>{{ object.titulo }}</h1>
-<p>{{ object.contenido }}</p>
+<div class='col-12 col-md-7 mb-3 mx-auto'>
+   <div class='card-body'>
+       {% if novedad_obj.imagen %}
+           <a href="{{ novedad_obj.get_absolute_url }}">
+             <center>
+               <img src="{{ novedad_obj.imagen.url }}" width="700" height="300"/>
+              </center>
+           </a>
+       {% endif %}
+       <h5 class='card-title'><b>{{ novedad_obj.titulo }}</b></h5>
+       <p class='card-text'>
+           <small class='text-muted'>{{ novedad_obj.publicado }}</small>
+               {{ novedad_obj.contenido }}
+       </p>
+   </div>
+</div>
 
 {% endblock %}

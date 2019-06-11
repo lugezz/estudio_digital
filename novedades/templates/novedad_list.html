@@ -1,11 +1,96 @@
 {% extends 'sales/base.html' %}
 {% load staticfiles %}
 {% load paginate %}
+{% load thumbnail %}
 {% block content %}
+<!-- main_container starts here -->
+<div class="main_container">
+  <!-- filter_row starts here -->
+  <div class="row marl">
+    <div class="col-lg-12 text-right">
+      <span class="d-inline"><a href="{% url 'novedades:novedad-create'%}" class="btn primary_btn">
+        <i class="fa fa-plus"></i> Agregar Nueva Novedad</a>
+      </span>
 
+    </div>
+  </div>
+  <!-- filter_row ends here -->
+  <div class="table_container_row row marl">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title list text-right">
+            <span class="float-left">Novedades - {% if show_pageitems %} {% show_pageitems %}{% else %} {{ novedades|length }}{% endif %}</span>
+            <span class="filter_toggle">
+            <a style="padding:0px 10px;" href="#" class="primary_btn"></a>
+            </span>
+          </div>
+          <div class="table-responsive ">
+            <table class="table table-bordered table-striped table-condensed">
+              <thead>
+                {% if novedades|length > 0 %}
+                <tr>
+                  <th width="10%">Imagen</th>
+                  <th width="15%">Titulo</th>
+                  <th width="55%">Novedad</th>
+                  <th width="20%">Acciones</th>
+                </tr>
+                {% endif %}
+              </thead>
+              <tbody>
+                {% if per_page %}
+                {% paginate per_page novedades %}
+                {% else %}
+                {% paginate 10 novedades %}
+                {% endif %}
+                {% for novedad in novedades %}
+                <tr class="text-center">
+                  <td><a href="{% url 'novedades:novedad-detail' novedad.id %}">
+                    {% if novedad.imagen %}
+                      {% thumbnail novedad.imagen "100x100" crop="center" as im %}
+                      <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" title="{{ novedad.imagen }}">
+                      {% endthumbnail %}
+                    {% else %}
+                      lalalal
+                    {% endif %}
+                  </a></td>
+                  <td><a href="{% url 'novedades:novedad-detail' novedad.id %}"><b>{{ novedad.titulo }}</b></a></td>
+                  <td>{{ novedad.contenido|truncatewords:50  }}</td>
 
-{% for instance in object_list %}
-     <p>{{ instance.id }} - <a href='{{ instance.get_absolute_url }}'>{{ instance.titulo }}</a></p>
-{% endfor %}
+                  <td class="actions">
+                    <!-- Si ya ingresó aquí es administrador, no necesita otro filtro -->
+                    <a href="{% url 'novedades:novedad-update' novedad.id %}" class="btn btn-success edit action"><i class="fas fa-pencil-alt"></i>Editar</a>
+                    <a href="{% url 'novedades:novedad-delete' novedad.id %}" class="btn btn-danger trash action">
+                      <i class="fas fa-trash-alt"></i>Borrar</a>
 
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% ifequal novedades|length 0 %}
+          <h6 class="text-center">No se encontraron Novedades</h6>
+          {% endifequal %}
+          <div class="marl row text-center">
+            {% show_pages %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- main_container ends here -->
 {% endblock %}
+{% block js_block %}
+<script type="text/javascript">
+  $('.trash').click(function(e){
+    e.preventDefault()
+    url = $(this).attr('href')
+    if (!confirm('¿Está seguro que desea borrar?'))
+      return;
+    window.location = $(this).attr('href')
+  });
+</script>
+
+{% endblock js_block %}

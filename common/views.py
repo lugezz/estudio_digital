@@ -28,6 +28,7 @@ from django.contrib.auth.views import PasswordResetView
 from django.urls import reverse_lazy, reverse
 from django.conf import settings
 from contacts.models import Contact
+from novedades.models import Novedad
 from django.template.loader import render_to_string
 from django.core.exceptions import PermissionDenied
 import boto3
@@ -61,13 +62,15 @@ class HomeView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         contacts = Contact.objects.all()
+        novedades = Novedad.objects.all()
         if self.request.user.role == "ADMIN" or self.request.user.is_superuser:
             pass
         else:
-            contacts = contacts.filter(
-                Q(created_by=self.request.user.id))
+            contacts = contacts.filter(Q(created_by=self.request.user.id))
+            novedades = novedades.filter(Q(asignado_a=self.request.user.id) | Q(asignado_a__isnull=True))
 
         context["contacts_count"] = contacts.count()
+        context["novedades_count"] = novedades.count()
         return context
 
 
@@ -899,7 +902,7 @@ class UpdateEmpresaView(LoginRequiredMixin, UpdateView):
             empresa_obj.asignado_a.add(
                 *self.request.POST.getlist('asignado_a'))
         else:
-            contact_obj.asignado_a.clear()
+            empresa_obj.asignado_a.clear()
 
 
         if self.request.is_ajax():

@@ -1,0 +1,86 @@
+{% extends 'sales/base.html' %}
+{% load staticfiles %}
+{% block breadcrumb %}
+{% block extralinks %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'tablas:feriados-list' %}">Feriados</a></li>
+    <li class="breadcrumb-item active">{% if feriado_obj %}Editar{% else %}Crear{% endif %}</li>
+  </ol>
+</nav>
+{% endblock %}
+{% block content %}
+<form id="add_form" method="POST" action='' novalidate enctype="multipart/form-data">
+  <div class="overview_form_block row marl justify-content-center">
+    <div class="col-md-9">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title text-center">
+            {% if feriado_obj %}EDITAR{% else %}CREAR{% endif %} Feriado
+          </div>
+
+
+          <!-- Columna 1 -->
+
+    <div class="row marl no-gutters justify-content-center">
+      <div class="col-md-6">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="exampleInputEmail1" class="required">Nombre
+              {% if feriado_form.nombre.field.required %}
+                <span class="error">*</span>
+                {% endif %}
+              </label>
+            {{ feriado_form.nombre }}
+            <span class="error">{{ feriado_form.nombre.errors }}</span>
+          </div>
+          </div>
+        </div>
+
+            <!-- Columna 2 -->
+        <div class="col-md-6">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="exampleInputEmail1">Fecha{% if feriado_form.fecha.field.required %}
+                <span class="error">*</span>{% endif %}</label>
+              {{ feriado_form.fecha }}
+              <span class="error">{{ feriado_form.fecha.errors }}</span>
+            </div>
+          </div>
+        </div>
+
+            <!-- Fin columnas-->
+
+            <div>
+              <br><br>
+
+            <input type="hidden" id="save_new_form" name="savenewform">
+            <div class="col-md-12">
+              <div class="row marl buttons_row text-center form_btn_row">
+                <button  class="btn btn-default save" type="submit">Grabar</button>
+                {% if not feriado_obj %}
+                <button class="btn btn-success save savenew" type="submit">Grabar & Nuevo</button>
+                {% endif %}
+                <a href="{% url 'tablas:feriados-list' %}" class="btn btn-default clear"
+                id="create_feraiado_cancel">Cancelar</a>
+              </div>
+            </div>
+        </div>
+  </div>
+</form>
+{% endblock %}
+{% block js_block %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script type="text/javascript">
+  $(".savenew").on('click', function(e){
+    e.preventDefault()
+    $("#save_new_form").val('true')
+    $('#add_form').submit()
+  });
+  $(document).ready(function() {
+    $('.assigned_users').select2();
+  });
+</script>
+{% endblock js_block %}

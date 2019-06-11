@@ -7,13 +7,13 @@ class Novedad(models.Model):
     contenido = models.TextField()
     activo  = models.BooleanField(default=True)
     imagen   = models.ImageField(upload_to='image/', blank=True, null=True)
-    publicado= models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
+    publicado= models.DateField()
     timestamp = models.DateTimeField(auto_now_add=True)
     actualizado = models.DateTimeField(auto_now=True)
     asignado_a = models.ManyToManyField(User, related_name='novedad_users', blank=True)
 
     def get_absolute_url(self):
-        return reverse("novedades:novedad-detail", kwargs={"id": self.id})
+        return reverse("novedades:novedad-detail", kwargs={"pk": self.pk})
 
     class Meta:
         ordering = ['-publicado', '-actualizado', '-timestamp']

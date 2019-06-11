@@ -56,16 +56,6 @@ LEAD_STATUS = (
 )
 
 
-LEAD_SOURCE = (
-    ('call', 'Call'),
-    ('email', 'Email'),
-    ('existing customer', 'Existing Customer'),
-    ('partner', 'Partner'),
-    ('public relations', 'Public Relations'),
-    ('compaign', 'Campaign'),
-    ('other', 'Other'),
-)
-
 STATUS_CHOICE = (
     ("New", "New"),
     ('Assigned', 'Assigned'),

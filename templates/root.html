@@ -63,6 +63,7 @@
                   <a class="dropdown-item" href="{% url 'common:users_list' %}">Usuarios</a>
                   <a class="dropdown-item" href="{% url 'common:empresas_list' %}">Empresas</a>
                   <a class="dropdown-item" href="{% url 'common:impuestos_list' %}">Impuestos</a>
+                  <a class="dropdown-item" href="{% url 'tablas:tablas_home' %}">Tablas</a>
                   <a class="dropdown-item" href="{% url 'common:api_settings' %}">Configuración</a>
                   {% endif %}
                   {% if request.user.email != "info@ceciliaprados.com.ar" %}
