@@ -114,7 +114,7 @@ class EmpresaForm(forms.ModelForm):
 
     class Meta:
         model = Empresa
-        fields = ['nombre', 'CUIT', 'mail', 'telefono', 'direccion', 'descripcion', 'asignado_a']
+        fields = ['nombre', 'CUIT', 'DGR', 'mail', 'telefono', 'direccion', 'descripcion', 'asignado_a']
 
 class ImpuestoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

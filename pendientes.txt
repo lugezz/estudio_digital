@@ -2,4 +2,8 @@ Facturas:
 
 	Evitar duplicados
 	Novedades según clientes
+	Validador de CUIT
 	
+	Validar Rentas y Nro DGR = 0
+
+

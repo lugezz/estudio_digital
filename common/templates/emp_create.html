@@ -22,10 +22,11 @@
           </div>
           <div class="row marl no-gutters justify-content-center">
             <div class="col-md-4">
+
               <div class="filter_col col-md-12">
                 <div class="form-group">
                   <div class="row">
-                    <div class="filter_col col-md-6">
+                    <div class="filter_col col-md-12">
                       <label for="exampleInputEmail1" class="required">Nombre
                         {% if empresa_form.nombre.field.required %}
                           <span class="error">*</span>
@@ -34,15 +35,46 @@
                       {{ empresa_form.nombre }}
                       <span class="error">{{ empresa_form.nombre.errors }}</span>
                     </div>
+
+                    <!--
                     <div class="filter_col col-md-6">
                       <label for="exampleInputEmail1" class="required">CUIT{% if empresa_form.CUIT.field.required %}<span class="error">*</span>{% endif %}</label>
                       {{ empresa_form.CUIT }}
                       <span class="error">{{ empresa_form.CUIT.errors }}</span>
                     </div>
+                    -->
                   </div>
                 </div>
               </div>
 
+              <!-- CUIT y DGR -->
+
+              <div class="filter_col col-md-12">
+                <div class="form-group">
+                  <div class="row">
+                    <div class="filter_col col-md-6">
+                      <label for="exampleInputEmail1" class="required">
+                        CUIT{% if empresa_form.CUIT.field.required %}<span class="error">*</span>{% endif %}</label>
+                      {{ empresa_form.CUIT }}
+                      <span class="error">{{ empresa_form.CUIT.errors }}</span>
+                    </div>
+
+
+                    <div class="filter_col col-md-6">
+                      <label for="exampleInputEmail1" class="required">
+                        Nª Rentas{% if empresa_form.DGR.field.required %}<span class="error">*</span>{% endif %}</label>
+                      {{ empresa_form.DGR }}
+                      <span class="error">{{ empresa_form.DGR.errors }}</span>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- CUIT y DGR  (fin)-->
+
+
+              <!-- Teléfono -->
 
               <div class="filter_col col-md-12">
                 <div class="form-group ">
@@ -51,6 +83,11 @@
                   <span class="error">{{ empresa_form.phone.errors }}</span>
                 </div>
               </div>
+
+              <!-- Teléfono (fin) -->
+
+              <!-- Mail -->
+
               <div class="filter_col col-md-12">
                 <div class="form-group ">
                   <label for="exampleInputEmail1" class="required" >Email{% if empresa_form.mail.field.required %}<span class="error">*</span>{% endif %}</label>
@@ -58,39 +95,59 @@
                   <span class="error">{{ empresa_form.email.errors }}</span>
                 </div>
               </div>
+
+            <!-- Mail (fin) -->
+
             </div>
 
+            <!-- Segunda columna -------------------------->
+            <!-- Segunda columna -------------------------->
             <div class="col-md-4">
+
               <div class="filter_col col-md-12">
                 <div class="form-group">
                   <label for="exampleInputEmail1">Dirección</label>
                   {{ address_form.street }}
                   <span class="error">{{ address_form.street.errors }}</span>
                 </div>
-                {{ address_form.address_line }}
-                <span class="error">{{ address_form.address_line.errors }}</span>
-                <div class="row" style="margin-top: 10px;">
-                  <div class="col-md-4">
-                    {{ address_form.city }}
-                    {{ address_form.city.errors }}
+                <div class="row" style="margin-top: 3px;">
+                  <div class="col-md-6">
+                  {{ address_form.address_line }}
+                  <span class="error">{{ address_form.address_line.errors }}</span>
                   </div>
-                  <div class="col-md-4">
-                    {{ address_form.state }}
-                    <span class="error">{{ address_form.state.errors }}</span>
-                  </div>
-                  <div class="col-md-4">
+
+                  <div class="col-md-6">
                     {{ address_form.postcode }}
                     <span class="error">{{ address_form.postcode.errors }}</span>
                   </div>
+
+                </div>
+
+                <div class="row" style="margin-top: 3px;">
+                <div class="col-md-12" style="margin-top: 10px;">
+                    {{ address_form.city }}
+                    {{ address_form.city.errors }}
+                  </div>
+                  <div class="col-md-12" style="margin-top: 10px;">
+                    {{ address_form.state }}
+                    <span class="error">{{ address_form.state.errors }}</span>
+                  </div>
+
                   <div class="col-md-12" style="margin-top: 10px;">
                     {{ address_form.country }}
                     <span class="error">{{ address_form.country.errors }}</span>
                   </div>
                 </div>
-                <br>
               </div>
+
+                <br>
+
             </div>
 
+
+
+            <!-- Tercera columna -------------------------->
+            <!-- Tercera columna -------------------------->
 
             <div class="col-md-4">
               <div class="col-md-12">

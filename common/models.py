@@ -123,9 +123,27 @@ class Impuesto(models.Model):
     class Meta:
         ordering = ['nombre']
 
+class Vencimiento(models.Model):
+    Term_Choices = [(i,i) for i in range(10)]
+
+    impuesto = models.ForeignKey(
+        Impuesto, related_name='impuesto_vencimiento',
+        on_delete=models.CASCADE)
+
+    periodo = models.DateField(auto_now=False, auto_now_add=False)
+    terminacion = models.IntegerField(choices=Term_Choices) #funciona como un desde
+    vencimiento = models.DateField(auto_now=False, auto_now_add=False)
+
+    def __str__(self):
+        return '%s %s %s' % (self.impuesto, "-", self.terminacion)
+
+    class Meta:
+        ordering = ['vencimiento']
+
 class Empresa(models.Model):
     nombre = models.CharField(max_length=50, unique = True)
     CUIT = models.BigIntegerField()
+    DGR = models.BigIntegerField(default=0, null=True)
     is_active = models.BooleanField(default=True)
     mail = models.CharField(max_length=50)
     telefono = models.CharField(max_length=50)
