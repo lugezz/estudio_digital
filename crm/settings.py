@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'contacts',
     'sorl.thumbnail',
     'phonenumber_field',
-    'storages',
+    #'storages',
     'facturas',
     'novedades',
     'tablas',
